@@ -39,7 +39,6 @@ public class Main {
     }
 
     public static void zipFiles(GameProgress player1, GameProgress player2, GameProgress player3) {
-
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream("D://Games/savegames/zip_output.zip"));
              FileInputStream fis1 = new FileInputStream("D://Games/savegames/save1.dat");
              FileInputStream fis2 = new FileInputStream("D://Games/savegames/save2.dat");
@@ -69,5 +68,4 @@ public class Main {
         File delete3 = new File("D://Games/savegames/save3.dat");
         if (delete3.delete()) ;
     }
-
 }
