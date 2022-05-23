@@ -1,7 +1,9 @@
 package com.company;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
+
 import java.util.zip.ZipOutputStream;
 
 public class Main {
@@ -11,61 +13,62 @@ public class Main {
         GameProgress player2 = new GameProgress(4, 11, 3, 53.2);
         GameProgress player3 = new GameProgress(5, 4, 6, 28.3);
 
-        saveGame(player1, player2, player3);
-        zipFiles(player1, player2, player3);
+        saveGame("D://Games/savegames/save1.dat", player1);
+        saveGame("D://Games/savegames/save2.dat", player2);
+        saveGame("D://Games/savegames/save3.dat", player3);
+
+        ArrayList<String> player = new ArrayList<>();
+        player.add("D://Games/savegames/save1.dat");
+        player.add("D://Games/savegames/save2.dat");
+        player.add("D://Games/savegames/save3.dat");
+
+        zipFiles(player);
+
+        deleteFile(player);
     }
 
-    public static void saveGame(GameProgress player1, GameProgress player2, GameProgress player3) {
-        try (FileOutputStream fos = new FileOutputStream("D://Games/savegames/save1.dat");
+    public static void saveGame(String path, GameProgress player) {
+        try (FileOutputStream fos = new FileOutputStream(path);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(player1);
+            oos.writeObject(player);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 
-        try (FileOutputStream fos = new FileOutputStream("D://Games/savegames/save2.dat");
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(player2);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        try (FileOutputStream fos = new FileOutputStream("D://Games/savegames/save3.dat");
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(player3);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
     }
 
-    public static void zipFiles(GameProgress player1, GameProgress player2, GameProgress player3) {
-        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream("D://Games/savegames/zip_output.zip"));
-             FileInputStream fis1 = new FileInputStream("D://Games/savegames/save1.dat");
-             FileInputStream fis2 = new FileInputStream("D://Games/savegames/save2.dat");
-             FileInputStream fis3 = new FileInputStream("D://Games/savegames/save3.dat")) {
-            ZipEntry entry = new ZipEntry("packed.txt");
-            zout.putNextEntry(entry);
-            byte[] buffer1 = new byte[fis1.available()];
-            byte[] buffer2 = new byte[fis2.available()];
-            byte[] buffer3 = new byte[fis3.available()];
-            fis1.read(buffer1);
-            fis2.read(buffer2);
-            fis3.read(buffer3);
-            zout.write(buffer1);
-            zout.write(buffer2);
-            zout.write(buffer3);
-            zout.closeEntry();
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+    public static void zipFiles(ArrayList<String> player) {
+        try (ZipOutputStream zout = new ZipOutputStream(
+                new FileOutputStream( "D://Games/savegames/zip_output.zip", true))) {
+            for (String allFile : player) {
+                try (FileInputStream fis = new FileInputStream(allFile)) {
+                      if (allFile.equals("D://Games/savegames/save1.dat")) {
+                          ZipEntry entry = new ZipEntry("zip_output1");
+                          zout.putNextEntry(entry);
+                      }
+                      if (allFile.equals("D://Games/savegames/save2.dat")) {
+                          ZipEntry entry = new ZipEntry("zip_output2");
+                          zout.putNextEntry(entry);
+                      }
+                      if (allFile.equals("D://Games/savegames/save3.dat")) {
+                          ZipEntry entry = new ZipEntry("zip_output3");
+                          zout.putNextEntry(entry);
+                      }
+                        byte[] buffer = new byte[fis.available()];
+                        fis.read(buffer);
+                        zout.write(buffer);
+                        zout.closeEntry();
+                }
+            }
+            } catch(Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+    }
+
+    public static void deleteFile(ArrayList<String> player) {
+        for (String del : player) {
+            File file = new File(del);
+            if (file.delete()) ;
         }
-
-        File delete1 = new File("D://Games/savegames/save1.dat");
-        if (delete1.delete()) ;
-
-        File delete2 = new File("D://Games/savegames/save2.dat");
-        if (delete2.delete()) ;
-
-        File delete3 = new File("D://Games/savegames/save3.dat");
-        if (delete3.delete()) ;
     }
 }
