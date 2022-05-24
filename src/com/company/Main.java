@@ -12,15 +12,21 @@ public class Main {
         GameProgress player1 = new GameProgress(8, 7, 8, 23.5);
         GameProgress player2 = new GameProgress(4, 11, 3, 53.2);
         GameProgress player3 = new GameProgress(5, 4, 6, 28.3);
+        GameProgress player4 = new GameProgress(6, 8, 8, 18.3);
+        GameProgress player5 = new GameProgress(9, 9, 7, 78.3);
 
         saveGame("D://Games/savegames/save1.dat", player1);
         saveGame("D://Games/savegames/save2.dat", player2);
         saveGame("D://Games/savegames/save3.dat", player3);
+        saveGame("D://Games/savegames/save4.dat", player4);
+        saveGame("D://Games/savegames/save5.dat", player5);
 
         ArrayList<String> player = new ArrayList<>();
         player.add("D://Games/savegames/save1.dat");
         player.add("D://Games/savegames/save2.dat");
         player.add("D://Games/savegames/save3.dat");
+        player.add("D://Games/savegames/save4.dat");
+        player.add("D://Games/savegames/save5.dat");
 
         zipFiles(player);
 
@@ -42,18 +48,10 @@ public class Main {
                 new FileOutputStream( "D://Games/savegames/zip_output.zip", true))) {
             for (String allFile : player) {
                 try (FileInputStream fis = new FileInputStream(allFile)) {
-                      if (allFile.equals("D://Games/savegames/save1.dat")) {
-                          ZipEntry entry = new ZipEntry("zip_output1");
-                          zout.putNextEntry(entry);
-                      }
-                      if (allFile.equals("D://Games/savegames/save2.dat")) {
-                          ZipEntry entry = new ZipEntry("zip_output2");
-                          zout.putNextEntry(entry);
-                      }
-                      if (allFile.equals("D://Games/savegames/save3.dat")) {
-                          ZipEntry entry = new ZipEntry("zip_output3");
-                          zout.putNextEntry(entry);
-                      }
+                    String[] filePath = allFile.split("/");
+                    String fileName = filePath[filePath.length - 1];
+                    ZipEntry entry = new ZipEntry(fileName);
+                    zout.putNextEntry(entry);
                         byte[] buffer = new byte[fis.available()];
                         fis.read(buffer);
                         zout.write(buffer);
